@@ -1,0 +1,12 @@
+/.idea/
+
+/*.sql.gz
+/*.tar.gz
+/*.sql
+.DS_Store
+.history/*
+.vscode/*
+/docs/
+
+.env.local
+.env.*.local

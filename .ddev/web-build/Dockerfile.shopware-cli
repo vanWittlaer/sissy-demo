@@ -1,0 +1,6 @@
+#ddev-generated
+# Install the shopware-cli binary into the DDEV web image.
+# Pulled straight from the official `shopware/shopware-cli:bin` image — a tiny
+# scratch image whose sole payload is the statically-linked binary — so there is
+# nothing to compile and no extra runtime deps land in the web container.
+COPY --from=shopware/shopware-cli:bin /shopware-cli /usr/local/bin/shopware-cli

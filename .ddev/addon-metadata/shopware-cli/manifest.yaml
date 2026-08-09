@@ -1,0 +1,12 @@
+name: shopware-cli
+repository: vanwittlaer/ddev-shopware-cli
+version: 0.0.1
+install_date: "2026-08-08T17:45:34+02:00"
+project_files:
+    - web-build/Dockerfile.shopware-cli
+    - commands/web/shopware-cli
+    - commands/web/admin-watch
+    - commands/web/storefront-watch
+    - config.watcher.yaml
+global_files: []
+removal_actions: []

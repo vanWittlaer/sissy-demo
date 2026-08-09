@@ -1,0 +1,64 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - 'feature/**'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Least-privilege default token scope; the build jobs widen to packages:write below
+# (a called reusable workflow's token can't exceed the caller job's grant).
+permissions:
+  contents: read
+
+jobs:
+  build_stage:
+    if: github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature')
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/build-docker.yml
+    with:
+      environment: stage
+    secrets:
+      BEARER_PACKAGES_SHOPWARE: ${{ secrets.BEARER_PACKAGES_SHOPWARE }}
+
+  build_production:
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/build-docker.yml
+    with:
+      environment: prod
+    secrets:
+      BEARER_PACKAGES_SHOPWARE: ${{ secrets.BEARER_PACKAGES_SHOPWARE }}
+
+  # feature/** builds but never deploys — only develop and main reach a host.
+  deploy_stage:
+    if: github.ref == 'refs/heads/develop'
+    needs: build_stage
+    uses: ./.github/workflows/deploy-ssh.yml
+    with:
+      environment: stage
+      stack: stage
+      tag: ${{ needs.build_stage.outputs.tag }}
+    secrets:
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+  deploy_production:
+    if: github.ref == 'refs/heads/main'
+    needs: build_production
+    uses: ./.github/workflows/deploy-ssh.yml
+    with:
+      environment: prod
+      stack: prod
+      tag: ${{ needs.build_production.outputs.tag }}
+    secrets:
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
