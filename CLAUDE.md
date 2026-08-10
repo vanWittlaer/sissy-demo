@@ -89,7 +89,16 @@ All three `cd` to their own directory first, so they work from anywhere. `/var/w
 
 Traefik terminates TLS and forwards **plain HTTP** to the container on `:8000`. Shopware's public filesystem has no `url` set, so asset URLs are built from the incoming request — which reads as `http://` unless the proxy headers are trusted, producing blocked mixed-content on every `/bundles/...` asset.
 
-Two halves, both required: `shopware/config/packages/trusted_proxies.yaml` (Shopware core wires only `trusted_hosts`, so **`TRUSTED_PROXIES` is inert without this file**) and `TRUSTED_PROXIES=REMOTE_ADDR` in each stack's `.env.local`. `REMOTE_ADDR` is safe here because the app port is never published — only Traefik can reach it. The config lives in the image, so changing it needs a rebuild + deploy, not just an `up -d`.
+The fix is one variable in each stack's `.env.local`: **`SYMFONY_TRUSTED_PROXIES=0.0.0.0/0`**. Note the name — Symfony's FrameworkBundle defaults `trusted_proxies` to `%env(default::SYMFONY_TRUSTED_PROXIES)%`, so a plain `TRUSTED_PROXIES` is read by nothing and no config file is needed. `SYMFONY_TRUSTED_HEADERS` can stay unset; `Kernel.php` then trusts `FOR|PORT|PROTO`, which covers the scheme. It's an env var, so `up -d` suffices — no rebuild.
+
+`0.0.0.0/0` is safe only because no service publishes a port: Traefik is the sole route in, and it strips inbound `X-Forwarded-*` from untrusted clients. Publish an app port and this becomes a live spoofing vector.
+
+To check it's actually applied (`debug:config` fails on a frozen prod container):
+
+```bash
+docker compose -f prod/compose.yaml exec -T web php bin/console debug:container --parameter=kernel.trusted_proxies
+curl -s https://<domain>/admin | grep -o 'src="[^"]*"' | head   # server-side truth, no browser cache
+```
 
 ### Firewall
 

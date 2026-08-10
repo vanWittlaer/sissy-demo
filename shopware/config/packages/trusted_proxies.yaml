@@ -1,4 +1,0 @@
-# Shopware core wires only trusted_hosts, so TRUSTED_PROXIES is inert without this.
-framework:
-    trusted_proxies: '%env(default::TRUSTED_PROXIES)%'
-    trusted_headers: ['x-forwarded-for', 'x-forwarded-host', 'x-forwarded-proto', 'x-forwarded-port']
