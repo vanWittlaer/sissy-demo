@@ -81,7 +81,11 @@ Stage's `BASIC_AUTH` htpasswd hash goes through compose interpolation, so **ever
 ./refresh-stage.sh               # prod DB -> stage DB (routed via host), then deployment helper
 ```
 
-All three `cd` to their own directory first, so they work from anywhere. `/var/www/html/vendor/bin/shopware-deployment-helper run -n` is the single entry point for both **install** (empty DB) and **migrate** (existing DB) — same command either way; that is why bootstrap and deploy can share it. It's a composer bin proxy, called by full path rather than relying on `vendor/bin` being on the image's `PATH`. `shopware/deployment-helper` is a direct requirement in `composer.json` on purpose — it reached the project only via `shopware/docker`, and the whole deploy path depends on it.
+All three `cd` to their own directory first, so they work from anywhere.
+
+Install and migration both run in a dedicated **`setup` container** (`entrypoint: /setup`, the deployment helper), which the app services gate on via `depends_on: {setup: {condition: service_completed_successfully}}`. So `up -d` *is* the deploy — `bootstrap.sh` and `deploy.sh` no longer exec the helper themselves. The ordering matters: migrations land while the old containers still serve, then new ones start, rather than new code meeting an old schema. `setup` overrides the `x-app` anchor's `depends_on` so it doesn't depend on itself, and `restart: "no"` so a completed run isn't restarted.
+
+`shopware/deployment-helper` is a direct requirement in `composer.json` on purpose — it reached the project only via `shopware/docker`, and the whole deploy path depends on it.
 
 `refresh-stage.sh` pipes `mariadb-dump` through the *host* because prod's and stage's `internal` networks are isolated from each other. It does not copy media — `rsync prod/data/media stage/data/media` separately if needed.
 
