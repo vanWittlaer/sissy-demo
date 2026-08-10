@@ -1,12 +1,6 @@
-parameters:
-    # Overridden per stack in .env.local; prod turns it off.
-    env(SHOPWARE_UPDATE_MAIL_VARIABLES): '1'
-
 shopware:
     admin_worker:
         enable_admin_worker: false
-    mail:
-        update_mail_variables_on_send: '%env(bool:SHOPWARE_UPDATE_MAIL_VARIABLES)%'
     increment:
         # Drop the per-request DB writes; the data is only admin telemetry.
         user_activity:

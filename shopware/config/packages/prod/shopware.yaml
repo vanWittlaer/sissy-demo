@@ -1,0 +1,4 @@
+shopware:
+    mail:
+        # Skip re-rendering mail variables on every send.
+        update_mail_variables_on_send: false
