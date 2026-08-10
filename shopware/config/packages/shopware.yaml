@@ -13,15 +13,3 @@ shopware:
             type: 'array'
         message_queue:
             type: 'array'
-    staging:
-        mailing:
-            # Default true would stop stage sending mail once core.staging is on.
-            # Stage's MAILER_DSN points at a catch-all, so let it send.
-            disable_delivery: false
-        sales_channel:
-            # Applied by `system:setup:staging`, which only ever runs on stage.
-            # prefix, not equal: the rule must survive a path on the stored URL.
-            domain_rewrite:
-                - type: prefix
-                  match: 'https://www.sissy.my-demo.shop'
-                  replace: 'https://staging.sissy.my-demo.shop'
