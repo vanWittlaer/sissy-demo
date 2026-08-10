@@ -135,7 +135,7 @@ All of these must be **owned by UID 82** or the app fails with Permission denied
 
 Carried over from `sissy/README.md` — treat as unfinished, not as settled design:
 
-- **Risk W:** confirm a `worker` container actually runs `messenger:consume` and does not boot nginx — the `shopware/docker-base` entrypoint decides by args.
+- **`worker`/`scheduler` must use `entrypoint:`, never `command:`** — the image entrypoint is supervisord, which takes a command as positional args and aborts. With `restart: unless-stopped` that crash-loop reads as "Up" in `docker ps`; the queue simply stops draining.
 - CI deploy needs its own key: add the `SSH_PRIVATE_KEY` secret's public half to `/home/deploy/.ssh/authorized_keys` on the host, plus repo variables `DEPLOY_HOST` and `SSH_KNOWN_HOSTS`. cloud-init only imports the provider's console keys.
 
 ## CI/CD (`.github/workflows/`)
