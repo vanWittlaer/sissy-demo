@@ -43,7 +43,7 @@ Three compose stacks on one VPS, joined by an external Docker network named `edg
 
 ```
 edge/      Traefik v3.3 — owns :80/:443, ACME TLS, docker provider (exposedbydefault=false)
-prod/      web + worker×2 + scheduler + ops-shell + mariadb
+prod/      web + worker×2 + scheduler + mariadb
 stage/     web + worker + scheduler + mariadb   (Traefik basic-auth middleware)
 ```
 
@@ -54,7 +54,6 @@ Consequences that constrain any change you make here:
 - **Workers must consume both `async` and `low_priority`** — separate Doctrine queues; dropping `low_priority` silently strands those messages.
 - **Theme compilation happens inside the live `web` container** (via `shopware-deployment-helper`), because there is no S3 to hold the compiled theme. This is why deploys are not zero-downtime.
 - `scheduler` runs `scheduled-task:run` as a blocking long-running process — no `--no-wait`.
-- `ops-shell` (prod only, `ghcr.io/vanwittlaer/shopware-ops-shell`) is bash + shopware-cli + rclone with **no app code** — it cannot run `bin/console`. Its `sleep infinity` command is a placeholder pending that image's real backup entrypoint contract.
 
 ### The two-env-file rule (the #1 compose gotcha here)
 
@@ -137,7 +136,6 @@ All of these must be **owned by UID 82** or the app fails with Permission denied
 Carried over from `sissy/README.md` — treat as unfinished, not as settled design:
 
 - **Risk W:** confirm a `worker` container actually runs `messenger:consume` and does not boot nginx — the `shopware/docker-base` entrypoint decides by args.
-- `ops-shell`'s real backup/entrypoint contract is unverified (see the `shopware-ops-shell` repo).
 - CI deploy needs its own key: add the `SSH_PRIVATE_KEY` secret's public half to `/home/deploy/.ssh/authorized_keys` on the host, plus repo variables `DEPLOY_HOST` and `SSH_KNOWN_HOSTS`. cloud-init only imports the provider's console keys.
 
 ## CI/CD (`.github/workflows/`)

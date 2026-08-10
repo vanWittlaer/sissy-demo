@@ -1,0 +1,9 @@
+shopware:
+    system_config:
+        default:
+            # Blocks crawlers via robots.txt and shows the staging banner.
+            core.staging: true
+    staging:
+        mailing:
+            # core.staging would otherwise suppress delivery; stage mails a catch-all.
+            disable_delivery: false
