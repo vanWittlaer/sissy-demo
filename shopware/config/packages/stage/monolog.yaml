@@ -1,6 +1,8 @@
 # Mirrors prod: config/packages/prod/ does not load under APP_ENV=stage.
 parameters:
   env(MONOLOG_LOG_LEVEL): "error"
+  # Set per service in compose (web / worker / scheduler).
+  env(LOG_FILE): "app"
 monolog:
     handlers:
         main:
@@ -9,9 +11,20 @@ monolog:
             handler: nested
             excluded_http_codes: [404, 405]
             buffer_size: 50
+        # Keeps the name "nested" so core's prod rotating_file handler stays
+        # overridden rather than re-entering the stack alongside this one.
         nested:
+            type: group
+            members: [stderr, logfile]
+        stderr:
             type: stream
             path: php://stderr
+            level: "%env(MONOLOG_LOG_LEVEL)%"
+            formatter: monolog.formatter.json
+        logfile:
+            type: rotating_file
+            path: "%kernel.logs_dir%/%kernel.environment%-%env(LOG_FILE)%.log"
+            max_files: 14
             level: "%env(MONOLOG_LOG_LEVEL)%"
             formatter: monolog.formatter.json
         console:
