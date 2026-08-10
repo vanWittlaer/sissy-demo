@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "39b827f9bba318512a5b6d07d8014dc9",
+    "content-hash": "4983d8732b249bda843d599884e81d36",
     "packages": [
         {
             "name": "async-aws/core",
@@ -1866,6 +1866,69 @@
                 }
             ],
             "time": "2025-10-28T10:28:17+00:00"
+        },
+        {
+            "name": "frosh/tools",
+            "version": "3.12.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/FriendsOfShopware/FroshTools.git",
+                "reference": "5b3d8c92ff32b1e2887eb31ca7fde72c7ee805e7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/FriendsOfShopware/FroshTools/zipball/5b3d8c92ff32b1e2887eb31ca7fde72c7ee805e7",
+                "reference": "5b3d8c92ff32b1e2887eb31ca7fde72c7ee805e7",
+                "shasum": ""
+            },
+            "require": {
+                "shopware/core": "~6.6.0 || ~6.7.0",
+                "symfony/var-dumper": "^6.0 || ^7.0 || ^8.0"
+            },
+            "require-dev": {
+                "shopware/elasticsearch": "~6.6.0 || ~6.7.0"
+            },
+            "type": "shopware-platform-plugin",
+            "extra": {
+                "label": {
+                    "de-DE": "Tools",
+                    "en-GB": "Tools"
+                },
+                "description": {
+                    "de-DE": "Die kostenlose Shopware 6 App beinhaltet mehrere Werkzeuge um den Shop besser zu verwalten. Optimierter Cache Manager, Log Viewer um die Logeinträge zu sehen oder Tasks auszuführen.",
+                    "en-GB": "The free Shopware 6 app include several tools to manage the store much better like a cache manager, log viewer to see the log entries, run the tasks or see the system status."
+                },
+                "supportLink": {
+                    "de-DE": "https://github.com/FriendsOfShopware/FroshTools/issues",
+                    "en-GB": "https://github.com/FriendsOfShopware/FroshTools/issues"
+                },
+                "manufacturerLink": {
+                    "de-DE": "https://github.com/FriendsOfShopware/FroshTools",
+                    "en-GB": "https://github.com/FriendsOfShopware/FroshTools"
+                },
+                "shopware-plugin-class": "Frosh\\Tools\\FroshTools"
+            },
+            "autoload": {
+                "psr-4": {
+                    "Frosh\\Tools\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "FriendsOfShopware",
+                    "homepage": "https://friendsofshopware.com"
+                }
+            ],
+            "description": "Provides some basic things for managing the Shopware Installation",
+            "support": {
+                "issues": "https://github.com/FriendsOfShopware/FroshTools/issues",
+                "source": "https://github.com/FriendsOfShopware/FroshTools/tree/3.12.0"
+            },
+            "time": "2026-07-26T06:38:22+00:00"
         },
         {
             "name": "goetas-webservices/xsd2php-runtime",
