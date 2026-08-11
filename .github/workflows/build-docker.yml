@@ -17,7 +17,10 @@ on:
 env:
   # ONE image for every environment. prod and stage differ by tag, not by
   # repository, so promoting a build is just deploying an existing tag.
-  IMAGE: ghcr.io/vanwittlaer/sissy
+  # Derived from the repo, so a project built on sissy needs no edit here -- it
+  # must match APP_IMAGE in each stack's .env on the host. Only ever consumed by
+  # metadata-action below, which lowercases it; GHCR rejects uppercase.
+  IMAGE: ghcr.io/${{ github.repository }}
 
 jobs:
   build:
@@ -53,7 +56,7 @@ jobs:
             type=raw,value=${{ inputs.environment == 'prod' && 'latest' || 'stage' }}
             type=raw,value=${{ github.sha }}
           labels: |
-            org.opencontainers.image.title=sissy
+            org.opencontainers.image.title=${{ github.event.repository.name }}
             io.sissy.environment=${{ inputs.environment }}
 
       - name: Build and push Docker image

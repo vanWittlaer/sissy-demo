@@ -140,7 +140,9 @@ All of these must be **owned by UID 82** or the app fails with Permission denied
 
 ### Image
 
-`shopware/docker/Dockerfile` is a two-stage build: `ghcr.io/shopware/shopware-cli` runs `shopware-cli project ci /src`, and the result is copied `--chown=82` into `ghcr.io/shopware/docker-base:8.4`. The compose files reference `ghcr.io/vanwittlaer/sissy:${TAG:-latest}`.
+`shopware/docker/Dockerfile` is a two-stage build: `ghcr.io/shopware/shopware-cli` runs `shopware-cli project ci /src`, and the result is copied `--chown=82` into `ghcr.io/shopware/docker-base:8.4`. The compose files reference `${APP_IMAGE:?...}:${TAG:-latest}`.
+
+`APP_IMAGE` is the one identifier that names *the shop*, not the platform — everything else on the host (`/opt/sissy`, `99-sissy.cnf`, the `io.sissy.*` labels) names sissy itself and stays put when this is reused for another project. It lives in each stack's `.env`, and CI derives the same value from `github.repository`, so a new project needs no edit in `build-docker.yml`. Compose's `:?` form is deliberate: an unset `APP_IMAGE` fails with that message instead of docker's `invalid reference format`. `bootstrap.sh` warns when prod's and stage's values differ, since that silently breaks promote-by-tag.
 
 **One image name for every environment** — prod and stage differ by *tag*, never by repository, so promoting a build is just deploying an existing tag. `.github/workflows/` pushes two tags per build: a moving pointer (`latest` on `main`, `stage` on `develop`) and the immutable commit SHA. Deploys always use the SHA, passed from the build job's `tag` output, so what ships is exactly what was built. The environment is also recorded as an OCI label (`io.sissy.environment`).
 
