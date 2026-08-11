@@ -78,9 +78,22 @@ Stage's `BASIC_AUTH` htpasswd hash goes through compose interpolation, so **ever
 ./deploy.sh prod 1a2b3c4         # pull tag, recreate services, migrate + theme-compile
 ./deploy.sh stage latest
 ./refresh-stage.sh               # prod DB -> stage DB (routed via host), then deployment helper
+./backup.sh prod                 # db + media + files -> backups/prod/<UTC timestamp>/, rotated
+./restore.sh stage 20260811-030000   # DESTRUCTIVE; FORCE=1 required for prod
 ```
 
-All three `cd` to their own directory first, so they work from anywhere.
+All `cd` to their own directory first, so they work from anywhere.
+
+`backup.sh` dumps the database with `mariadb-dump --single-transaction` inside the
+stack's own `database` container, plus `tar`s `data/media` and `data/files`;
+`thumbnail`/`theme`/`sitemap` are skipped since they regenerate. **Don't "modernise"
+that dump to `shopware-cli project dump`** — it opens no transaction, so its output
+isn't consistent across tables, and its per-table `FLUSH TABLES ... WITH READ LOCK`
+is what forces the dump to run as root. `--single-transaction` is consistent, lock-free
+and needs no `RELOAD`, so `backup.sh` reads `DB_PASSWORD`, not `DB_ROOT_PASSWORD`
+(`restore.sh` still needs root — it drops and recreates the database).
+`BACKUP_ROOT` (default `./backups`, gitignored) should point at an actually-mounted
+backup volume in production. See `sissy/README.md#backups` for the full rundown.
 
 Install and migration both run in a dedicated **`setup` container** (`entrypoint: /setup`, the deployment helper), which the app services gate on via `depends_on: {setup: {condition: service_completed_successfully}}`. So `up -d` *is* the deploy — `bootstrap.sh` and `deploy.sh` no longer exec the helper themselves. The ordering matters: migrations land while the old containers still serve, then new ones start, rather than new code meeting an old schema. `setup` overrides the `x-app` anchor's `depends_on` so it doesn't depend on itself, and `restart: "no"` so a completed run isn't restarted.
 
