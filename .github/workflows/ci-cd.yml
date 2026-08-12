@@ -1,5 +1,8 @@
 name: CI/CD
 
+# Build and deploy come from the sissy platform repo, pinned to a major tag.
+# This file owns only the policy: which branch builds and deploys what.
+
 on:
   push:
     branches:
@@ -23,7 +26,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-    uses: ./.github/workflows/build-docker.yml
+    uses: vanWittlaer/sissy/.github/workflows/build-docker.yml@v1
     with:
       environment: stage
     secrets:
@@ -34,7 +37,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-    uses: ./.github/workflows/build-docker.yml
+    uses: vanWittlaer/sissy/.github/workflows/build-docker.yml@v1
     with:
       environment: prod
     secrets:
@@ -44,7 +47,7 @@ jobs:
   deploy_stage:
     if: github.ref == 'refs/heads/develop'
     needs: build_stage
-    uses: ./.github/workflows/deploy-ssh.yml
+    uses: vanWittlaer/sissy/.github/workflows/deploy-ssh.yml@v1
     with:
       environment: stage
       stack: stage
@@ -55,7 +58,7 @@ jobs:
   deploy_production:
     if: github.ref == 'refs/heads/main'
     needs: build_production
-    uses: ./.github/workflows/deploy-ssh.yml
+    uses: vanWittlaer/sissy/.github/workflows/deploy-ssh.yml@v1
     with:
       environment: prod
       stack: prod
