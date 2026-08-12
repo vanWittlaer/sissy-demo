@@ -6,6 +6,16 @@ on:
       environment:
         required: true
         type: string
+      # Defaults are this repo's layout, so callers using it pass neither.
+      # Both resolve against the CALLER's checkout, not sissy's.
+      context:
+        description: Build context — the Shopware app directory.
+        type: string
+        default: ./shopware
+      dockerfile:
+        description: Dockerfile path, relative to the repo root.
+        type: string
+        default: ./shopware/docker/Dockerfile
     secrets:
       BEARER_PACKAGES_SHOPWARE:
         required: false
@@ -62,8 +72,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./shopware
-          file: ./shopware/docker/Dockerfile
+          context: ${{ inputs.context }}
+          file: ${{ inputs.dockerfile }}
           push: true
           provenance: false
           cache-from: type=gha

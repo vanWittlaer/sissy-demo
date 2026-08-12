@@ -18,6 +18,10 @@ on:
         description: Image tag to deploy (the commit SHA from the build job).
         required: true
         type: string
+      deploy_path:
+        description: Directory holding deploy.sh on the host.
+        type: string
+        default: /opt/sissy
     secrets:
       SSH_PRIVATE_KEY:
         required: true
@@ -35,6 +39,11 @@ jobs:
           # Repo/environment variables, not secrets.
           HOST: ${{ vars.DEPLOY_HOST }}
           KNOWN_HOSTS: ${{ vars.SSH_KNOWN_HOSTS }}
+          # Via env, not inline in the run: string — keeps caller-supplied
+          # values out of the shell the runner parses.
+          DEPLOY_PATH: ${{ inputs.deploy_path }}
+          STACK: ${{ inputs.stack }}
+          TAG: ${{ inputs.tag }}
         run: |
           set -euo pipefail
           install -m 700 -d ~/.ssh
@@ -50,4 +59,4 @@ jobs:
           fi
           ssh -i ~/.ssh/id_deploy -o BatchMode=yes -o ConnectTimeout=15 \
               -o StrictHostKeyChecking="$STRICT" "deploy@$HOST" \
-              "/opt/sissy/deploy.sh '${{ inputs.stack }}' '${{ inputs.tag }}'"
+              "$DEPLOY_PATH/deploy.sh '$STACK' '$TAG'"
