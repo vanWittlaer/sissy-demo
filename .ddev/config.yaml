@@ -1,4 +1,4 @@
-name: sissy
+name: sissy-demo
 type: shopware6
 docroot: shopware/public
 php_version: "8.4"
