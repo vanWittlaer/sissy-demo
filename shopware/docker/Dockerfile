@@ -1,8 +1,9 @@
 #syntax=docker/dockerfile:1.4
 
 # pin versions
-FROM ghcr.io/shopware/docker-base:8.4 AS base-image
-FROM ghcr.io/shopware/shopware-cli:latest-php-8.4 AS shopware-cli
+ARG PHP_VERSION=8.4
+FROM ghcr.io/shopware/docker-base:$PHP_VERSION-frankenphp AS base-image
+FROM ghcr.io/shopware/shopware-cli:latest-php-$PHP_VERSION AS shopware-cli
 
 # build
 
