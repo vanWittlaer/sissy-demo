@@ -9,6 +9,8 @@ on:
       - main
       - develop
       - 'feature/**'
+    tags:
+      - 'v*'
   workflow_dispatch:
 
 concurrency:
@@ -32,8 +34,10 @@ jobs:
     secrets:
       BEARER_PACKAGES_SHOPWARE: ${{ secrets.BEARER_PACKAGES_SHOPWARE }}
 
+  # main verifies the prod image still builds; only a v* tag deploys it.
+  # Note: a main build also moves the `latest` image tag without a deploy.
   build_production:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
     permissions:
       contents: read
       packages: write
@@ -43,7 +47,7 @@ jobs:
     secrets:
       BEARER_PACKAGES_SHOPWARE: ${{ secrets.BEARER_PACKAGES_SHOPWARE }}
 
-  # feature/** builds but never deploys — only develop and main reach a host.
+  # feature/** and main build but never deploy — only develop and v* tags reach a host.
   deploy_stage:
     if: github.ref == 'refs/heads/develop'
     needs: build_stage
@@ -56,7 +60,7 @@ jobs:
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
   deploy_production:
-    if: github.ref == 'refs/heads/main'
+    if: startsWith(github.ref, 'refs/tags/v')
     needs: build_production
     uses: vanWittlaer/sissy/.github/workflows/deploy-ssh.yml@v1
     with:

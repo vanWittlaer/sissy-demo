@@ -42,6 +42,6 @@ What stays this repo's job:
 
 - **`shopware/docker/Dockerfile`** — the image build. Two stages: `ghcr.io/shopware/shopware-cli` runs `shopware-cli project ci /src`, and the result is copied `--chown=82` into `ghcr.io/shopware/docker-base:8.4`.
 - **`shopware/deployment-helper`** is a direct requirement in `composer.json` on purpose — it reached the project only via `shopware/docker`, and the whole deploy path depends on it.
-- **`.github/workflows/ci-cd.yml`** — policy only: `develop`/`feature/**` build for `stage`, `main` builds for `prod`, and only `develop`/`main` deploy. The build and deploy jobs it calls are `vanWittlaer/sissy/...@v1`, so bumping the platform is a tag bump here.
+- **`.github/workflows/ci-cd.yml`** — policy only: `develop`/`feature/**` build for `stage`, `main` and `v*` tags build for `prod`, and only `develop` (stage) and `v*` tags (prod) deploy. The build and deploy jobs it calls are `vanWittlaer/sissy/...@v1`, so bumping the platform is a tag bump here.
 
 The image name is derived in CI from `github.repository`. This repo was renamed `sissy` → `sissy-demo` on 2026-08-12, so builds now push to `ghcr.io/vanwittlaer/sissy-demo`; a host still holding `APP_IMAGE=ghcr.io/vanwittlaer/sissy` in its stack `.env` will pull happily and never see a new build.
