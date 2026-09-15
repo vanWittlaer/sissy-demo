@@ -26,7 +26,7 @@ ddev claude                      # Claude Code inside the web container
 
 `shopware/.env.local` (dev) overrides `shopware/.env` (which still carries the stock `prod`/localhost defaults — ignore it locally). DDEV runs PHP 8.4 / MariaDB 11.8 / Node 24, nginx-fpm, docroot `shopware/public`.
 
-Asset builds use the stock Shopware scripts from `shopware/`: `bin/build-administration.sh`, `bin/build-storefront.sh`, `bin/watch-administration.sh`, `bin/watch-storefront.sh`.
+Asset builds and watchers go through shopware-cli, installed in the web container by the `vanwittlaer/ddev-shopware-cli` add-on (see `.ddev/addon-metadata/shopware-cli/`): `ddev shopware-cli project admin-build`, `ddev shopware-cli project storefront-build`, `ddev storefront-watch`, `ddev admin-watch <plugin-dir>`. Don't point at the stock `bin/build-*.sh` / `bin/watch-*.sh` scripts.
 
 There is **no test, lint, or static-analysis tooling in this project** — no PHPUnit, PHPStan, ECS, or Makefile, and `custom/plugins` is empty. Don't invent commands for them; if a plugin is added, its own tooling comes with it.
 
