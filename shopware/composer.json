@@ -5,6 +5,7 @@
         "composer-runtime-api": "^2.0",
         "frosh/tools": "^3.12",
         "shopware/administration": "*",
+        "shopware/conflicts": "^0.6.2",
         "shopware/core": "^v6.7.14",
         "shopware/deployment-helper": "^0.1.2",
         "shopware/docker": "^0.3.0",
@@ -12,9 +13,6 @@
         "shopware/storefront": "*",
         "swag/demo-data": "^2.1",
         "symfony/flex": "~2"
-    },
-    "conflict": {
-        "twig/twig": ">=3.29.0"
     },
     "repositories": [
         {

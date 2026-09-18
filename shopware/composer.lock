@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "18eab5178412b6c1533a853e190225c4",
+    "content-hash": "d88c569cab554d4ba24a540656727b47",
     "packages": [
         {
             "name": "async-aws/core",
@@ -6343,6 +6343,7 @@
                 "symfony/polyfill-php84": "1.38.0",
                 "symfony/symfony": "*",
                 "symfony/web-profiler-bundle": "<7.3.0",
+                "twig/twig": ">=3.29",
                 "zircote/swagger-php": "4.8.7"
             },
             "type": "metapackage",
